@@ -3,9 +3,13 @@ import matplotlib.pyplot as plt
 
 from colour import Color
 
+path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\"
+
 # ==== --- PARAMETERS --- ==== #
 
-width = 800
+width = 3200
+
+resolution = 1e-3
 
 xMin = -5
 xMax = 20
@@ -67,7 +71,7 @@ def fractal( tr_a , tr_b ):
 
     # === ---- === #
     
-    Fixed points of each transformation
+    # Fixed points of each transformation
     z_list = [ (A[0,0]-A[1,1] + np.sqrt( (A[0,0]-A[1,1])**2 +4*A[1,0]*A[0,1] ) )/(2*A[1,0]) , 
                (A[0,0]-A[1,1] - np.sqrt( (A[0,0]-A[1,1])**2 +4*A[1,0]*A[0,1] ) )/(2*A[1,0]) ,
                
@@ -89,6 +93,7 @@ def fractal( tr_a , tr_b ):
     # === -- Calcul et affichage de toutes les transformations réduites possibles -- === #
     
     point_list = [ point_obj( -1 , z ) for z in z_list ]
+    visited_points = []
     
     while( len(point_list) > 0 ):
         
@@ -114,8 +119,7 @@ def fractal( tr_a , tr_b ):
                     for tr in newTransfo:
                         point_list.append( point_obj( tr , transfo( [A,A_1,B,B_1][tr] , point.coord ) ) )
                     
-                else:
-                    point_list.pop(i)
+            point_list.pop(i)
     
     # === ---- === #
     
@@ -123,6 +127,8 @@ def fractal( tr_a , tr_b ):
     
     plt.xlabel("Real part")
     plt.ylabel("Imaginary part")
+    
+    plt.savefig( path + "img.png" , dpi=600 )
     
     plt.show()
 
