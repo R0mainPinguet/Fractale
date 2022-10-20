@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# from colour import Color
+from colour import Color
 
 # ==== --- PARAMETERS --- ==== #
 
@@ -35,101 +35,18 @@ def coord( x , y ):
     
     return (int(i),int(j))
     
-transfo = lambda M , z : ( M[0,0] * z + M[0,1] )/(M[1,0] * z + M[1,1])
+def transfo( M , z ): 
+    return ( M[0,0] * z + M[0,1] ) / (M[1,0] * z + M[1,1])
 
 
-class Tree():
-    def __init__(self,indice):
-        self.indice = indice
-        self.childs = []
-        
-        if (self.indice == -1 ):
-            self.childs = []
+
+
+class point_obj():
     
-    def clear(self):
-        self.indice = -1
-        self.childs = []
-        
-    def size(self):
-        if(self.childs == [] ):
-            return(1)
-        else:
-            s = 0
-            for x in self.childs:
-                s += x.size()
-                
-            return(1+s)
-
-    # def create_childs(self , N):
-    #     if(N>0):
-    #         index = self.indice
-    #         l = [0,1,2,3]
-    #         
-    #         if( index != -1 ):
-    #             
-    #             l.remove( [1,0,3,2][index] )
-    #             
-    #         for x in l:
-    #             self.childs.append( Tree(x) )
-    #         
-    #         for child in self.childs:
-    #             child.create_childs(N-1)
-                
-
-    def print_fractal(self , output , transfo_list , z_list , depth , N):
-        
-        if( N>0):
+    def __init__(self , lastTransfo , coord ):
+        self.lastTransfo = lastTransfo
+        self.coord = coord
             
-            index = self.indice
-            l = [0,1,2,3]
-            
-            if( index != -1 ):
-                l.remove( [1,0,3,2][index] )
-                
-            if( index == -1 ):
-                
-                for z in z_list:
-        
-                    (x,y) = coord( np.real(z) , np.imag(z) )
-                    if( x >= 0 and x<width and y>=0 and y<width):
-                        output[ x,y ] = colours[0]
-                
-                for c in l:
-                    self.childs.append( Tree(c) )
-                
-                for child in self.childs:
-                    child.print_fractal( output ,  transfo_list , z_list , depth+1 , N-1 )
-                    
-            else:
-                
-                z_list = [ transfo( transfo_list[self.indice] , z ) for z in z_list ]
-                
-                for i in range(len(z_list)-1,-1,-1):
-                    
-                    z = z_list[i]
-                    
-                    (x,y) = coord( np.real(z) , np.imag(z) )
-                    if( x >= 0 and x<width and y>=0 and y<width):
-                        
-                        # If the grid has already been changed
-                        if( (output[x,y]==[1,1,1]).all()):
-                            output[ x,y ] = colours[depth]
-                        else:
-                            z_list.pop(i)
-                
-                for c in l:
-                    self.childs.append( Tree(c) )
-                    
-                if( z_list != [] ):
-                    for child in self.childs:
-                        child.print_fractal( output , transfo_list , z_list , depth+1 , N-1)
-                
-            
-            
-            
-            
-
-
 def fractal( tr_a , tr_b ):
     
     output = 1-np.zeros((width,width,3),dtype = 'float')
@@ -150,7 +67,7 @@ def fractal( tr_a , tr_b ):
 
     # === ---- === #
     
-    # Fixed points of each transformation
+    Fixed points of each transformation
     z_list = [ (A[0,0]-A[1,1] + np.sqrt( (A[0,0]-A[1,1])**2 +4*A[1,0]*A[0,1] ) )/(2*A[1,0]) , 
                (A[0,0]-A[1,1] - np.sqrt( (A[0,0]-A[1,1])**2 +4*A[1,0]*A[0,1] ) )/(2*A[1,0]) ,
                
@@ -171,11 +88,34 @@ def fractal( tr_a , tr_b ):
     
     # === -- Calcul et affichage de toutes les transformations réduites possibles -- === #
     
-    arbre = Tree(-1)
+    point_list = [ point_obj( -1 , z ) for z in z_list ]
     
-    arbre.print_fractal( output , [ A , A_1 , B , B_1 ] , z_list , depth=0 , N=iter)
+    while( len(point_list) > 0 ):
+        
+        print(len(point_list))
+        
+        N = len(point_list) - 1
+        
+        for i in range(N , -1 , -1):
+            
+            point = point_list[i]
+            
+            newTransfo = [0,1,2,3]
+            if( point.lastTransfo != -1 ):
+                newTransfo.remove( [1,0,3,2][point.lastTransfo] )
+            
+            (x,y) = coord( np.real(point.coord) , np.imag(point.coord) )
+            if( x >= 0 and x<width and y>=0 and y<width):
 
-    print(arbre.size())
+                # If the grid point has never been reached
+                if( (output[x,y]==[1,1,1]).all()):
+                    output[ x,y ] = [0,0,0]
+                    
+                    for tr in newTransfo:
+                        point_list.append( point_obj( tr , transfo( [A,A_1,B,B_1][tr] , point.coord ) ) )
+                    
+                else:
+                    point_list.pop(i)
     
     # === ---- === #
     
