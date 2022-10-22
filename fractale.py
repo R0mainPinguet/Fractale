@@ -8,13 +8,13 @@ path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\"
 
 # ==== --- PARAMETERS --- ==== #
 
-epsilon = 1e-2
+epsilon = 5e-3
 
-xMin = -5
-xMax = 20
+xMin = -3
+xMax = 3
 
-yMin = -5
-yMax = 20
+yMin = -2
+yMax = 4.5
 
 xWidth = int( (xMax - xMin) / epsilon )
 yWidth = int( (yMax - yMin) / epsilon )
@@ -111,6 +111,7 @@ def fractal( tr_a , tr_b , gif ):
         print(z)
     print("===")
     
+    initial_z_list = z_list.copy()
     
     
     # === ---- === #
@@ -179,9 +180,13 @@ def fractal( tr_a , tr_b , gif ):
     
     if( gif ):
         
-        iio.mimsave( path + 'movie.gif', images)
+        iio.mimsave( path + str(tr_a) + str(tr_b) + '.gif', images)
     
-    
+    for z in initial_z_list:
+        (x,y) = coord( np.real(z) , np.imag(z) )
+        if( x >= 0 and x<xWidth and y>=0 and y<yWidth):
+            output[ x,y ] = [1,0,0]
+                
     plt.imshow(output,extent=[xMin,xMax,yMin,yMax])
     
     plt.title('tr_a = ' + str(tr_a) + ' tr_b = ' + str(tr_b) )
@@ -189,13 +194,13 @@ def fractal( tr_a , tr_b , gif ):
     plt.xlabel("Real part")
     plt.ylabel("Imaginary part")
     
-    plt.savefig( path + "img.png" , dpi=600 )
+    plt.savefig( path + str(tr_a) + str(tr_b) + ".png" , dpi=600 )
     
     plt.show()
 
 
 
-fractal( tr_a = 1.91 + .05j , tr_b = 1.91 + .05j , gif = True )
+fractal( tr_a = 2.2+0j , tr_b = 2.2+0j , gif = True )
 
 
 
