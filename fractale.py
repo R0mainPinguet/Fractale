@@ -8,13 +8,14 @@ path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\"
 
 # ==== --- PARAMETERS --- ==== #
 
-epsilon = 5e-3
+epsilon = 1e-2
+iterMax = 30
 
-xMin = -3
-xMax = 3
+xMin = -5
+xMax = 20
 
-yMin = -2
-yMax = 4.5
+yMin = -5
+yMax = 20
 
 xWidth = int( (xMax - xMin) / epsilon )
 yWidth = int( (yMax - yMin) / epsilon )
@@ -22,20 +23,34 @@ yWidth = int( (yMax - yMin) / epsilon )
 print("xWidth = " + str(xWidth) )
 print("yWidth = " + str(yWidth) )
 
-# red = Color("red")
-# blue = Color("blue")
-black = Color("black")
+# ==== ------ ==== #
 
-# colours = list(red.range_to(blue,iterations+1))
-# colours = list(black.range_to(black,iterations+1))
-# colours = [col.rgb for col in colours]
+# ==== --- VISUALS --- ==== #
+
+# orange = Color("orange")
+# red = Color("red")
+# purple = Color("purple")
+# blue = Color("blue")
+# green = Color("green")
+# yellow = Color("yellow")
+
+# colours = list(orange.range_to(red,int((iterMax+1)/5)))
+# colours += list(red.range_to(purple,int((iterMax+1)/5)))
+# colours += list(purple.range_to(blue,int((iterMax+1)/5)))
+# colours += list(blue.range_to(green,int((iterMax+1)/5)))
+# colours += list(green.range_to(yellow,int((iterMax+1)/5)))
+
+black = Color("black")
+colours = list(black.range_to(black,iterMax+1))
+
+colours = [col.rgb for col in colours]
 
 
 # For the gif
 images = []
 
-
 # ==== ------ ==== #
+
 
     
 def coord( x , y ):
@@ -68,10 +83,12 @@ class point_obj():
         self.coord = coord
 
 
-def fractal( tr_a , tr_b , gif ):
+def fractal( tr_a , tr_b , gif , iterMax ):
     
     output = 1-np.zeros((yWidth,xWidth,3),dtype = 'float')
 
+    iter = 0
+    
     # === -- Définition des transformations A B A**-1 B**-1 -- === #
     
     tr_ab = ( tr_a * tr_b - np.sqrt(tr_a**2 * tr_b**2 -4*tr_a**2 -4*tr_b**2) ) / 2
@@ -121,11 +138,12 @@ def fractal( tr_a , tr_b , gif ):
     
     point_list = [ point_obj( -1 , z ) for z in z_list ]
     
-    while( len(point_list) > 0 ):
+    while( (len(point_list) > 0) and (iter < iterMax) ):
         
-        print("Length of the points list : " + str(len(point_list)) )
+        iter+=1
         
         N = len(point_list) - 1
+        print("Length of the points list : " + str(N+1) )
         
         for i in range(N , -1 , -1):
             
@@ -149,7 +167,7 @@ def fractal( tr_a , tr_b , gif ):
                 # If the point is not too close from the previous points
                 if( (output[ x,y ]==[1,1,1]).all() ):
                                         
-                    output[ x,y ] = [0,0,0]
+                    output[ x,y ] = colours[iter]
                     
                     for tr in newTransfo:
                         point_list.append( point_obj( tr , transfo( [A,A_1,B,B_1][tr] , point.coord ) ) )
@@ -180,7 +198,7 @@ def fractal( tr_a , tr_b , gif ):
     
     if( gif ):
         
-        iio.mimsave( path + str(tr_a) + str(tr_b) + '.gif', images)
+        iio.mimsave( path + str(tr_a) + str(tr_b) + '.gif', images , fps = 10 )
     
     for z in initial_z_list:
         (x,y) = coord( np.real(z) , np.imag(z) )
@@ -200,7 +218,7 @@ def fractal( tr_a , tr_b , gif ):
 
 
 
-fractal( tr_a = 2.2+0j , tr_b = 2.2+0j , gif = True )
+fractal( tr_a = 1.87+.1j , tr_b = 1.87-.1j , gif = True , iterMax = iterMax )
 
 
 
