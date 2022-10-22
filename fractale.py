@@ -55,7 +55,7 @@ images = []
     
 def coord( x , y ):
     '''
-    Converts complex coordinates x+iy to pixel coordinates (i,j) on the grid of size width
+    Converts complex coordinates x+iy to pixel coordinates (i,j) on the grid of size xWidth * yWidth
     '''
     
     i = (yWidth-1) * (y-yMax)/(yMin-yMax)
@@ -89,7 +89,7 @@ def fractal( tr_a , tr_b , gif , iterMax ):
 
     iter = 0
     
-    # === -- Définition des transformations A B A**-1 B**-1 -- === #
+    # === -- Définition des transformations A B A^(-1) et B^(-1) -- === #
     
     tr_ab = ( tr_a * tr_b - np.sqrt(tr_a**2 * tr_b**2 -4*tr_a**2 -4*tr_b**2) ) / 2
     
