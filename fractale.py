@@ -9,7 +9,7 @@ path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\"
 # ==== --- PARAMETERS --- ==== #
 
 epsilon = 1e-2
-iterMax = 30
+iterMax = 20
 
 xMin = -5
 xMax = 20
@@ -82,11 +82,17 @@ class point_obj():
         self.lastTransfo = lastTransfo
         self.coord = coord
 
-
-def fractal( tr_a , tr_b , gif , iterMax ):
+def is_far(z1,z2):
+    '''
+    Returns True if the complex z1 is far enough from the complex z2. False otherwise
+    '''
+    res = 2.05
     
-    output = 1-np.zeros((yWidth,xWidth,3),dtype = 'float')
+    return( np.abs(z1-z2) > res )
+    
 
+def fractal( output , tr_a , tr_b , gif , iterMax ):
+    
     iter = 0
     
     # === -- Définition des transformations A B A^(-1) et B^(-1) -- === #
@@ -105,7 +111,7 @@ def fractal( tr_a , tr_b , gif , iterMax ):
 
     # === ---- === #
     
-    # # Fixed points of each transformation
+    # Fixed points of each transformation
     z_list = [ z0,
                              
                (A[0,0]-A[1,1] + np.sqrt( (A[0,0]-A[1,1])**2 +4*A[1,0]*A[0,1] ) )/(2*A[1,0]) , 
@@ -130,7 +136,6 @@ def fractal( tr_a , tr_b , gif , iterMax ):
     
     initial_z_list = z_list.copy()
     
-    
     # === ---- === #
     
     
@@ -143,39 +148,37 @@ def fractal( tr_a , tr_b , gif , iterMax ):
         iter+=1
         
         N = len(point_list) - 1
-        print("Length of the points list : " + str(N+1) )
+        
+        print("===\nIteration : "+ str(iter) +" / " + str(iterMax))
+        print("Length of the points list : " + str(N+1)+"\n===")
         
         for i in range(N , -1 , -1):
             
             point = point_list.pop(i)
             
-            
-            # == - Trying different zones - == #
-            # if( np.abs(np.real(point.coord) - .5) < .01 and np.abs(np.imag(point.coord)+1) < .01 ):
-            #     print(point.coord)
-            # == -- == #
-            
-            
             newTransfo = [0,1,2,3]
             if( point.lastTransfo != -1 ):
                 newTransfo.remove( [1,0,3,2][point.lastTransfo] )
             
-            
-            (x,y) = coord( np.real(point.coord) , np.imag(point.coord) )
-            if( x >= 0 and x<xWidth and y>=0 and y<yWidth):
+            # If the point is inside our grid
+            if( np.real(point.coord) > xMin and np.real(point.coord) < xMax and np.imag(point.coord) > yMin and np.imag(point.coord) < yMax):
                 
-                # If the point is not too close from the previous points
-                if( (output[ x,y ]==[1,1,1]).all() ):
-                                        
-                    output[ x,y ] = colours[iter]
-                    
+                (x,y) = coord( np.real(point.coord) , np.imag(point.coord) )
+                output[ x,y ] = colours[iter]
+                
+                if (iter < iterMax ):
                     for tr in newTransfo:
-                        point_list.append( point_obj( tr , transfo( [A,A_1,B,B_1][tr] , point.coord ) ) )
-        
-        
+                        new_point = transfo( [A,A_1,B,B_1][tr] , point.coord )
+                        
+                        # If the new point is not too close from the previous point
+                        if( is_far( point.coord , new_point) ):
+                            
+                            point_list.append( point_obj( tr , new_point ) )
+    
         
         # == Saving the gif == #
         if( gif ):
+            
             fig,axs=plt.subplots(1,1)
             
             axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
@@ -197,8 +200,9 @@ def fractal( tr_a , tr_b , gif , iterMax ):
     # === ---- === #
     
     if( gif ):
-        
-        iio.mimsave( path + str(tr_a) + str(tr_b) + '.gif', images , fps = 10 )
+        print("Saving the gif ...")
+        iio.mimsave( path + str(tr_a) + str(tr_b) + '.gif', images , fps = 5 )
+        print("Gif saved !")
     
     for z in initial_z_list:
         (x,y) = coord( np.real(z) , np.imag(z) )
@@ -215,10 +219,11 @@ def fractal( tr_a , tr_b , gif , iterMax ):
     plt.savefig( path + str(tr_a) + str(tr_b) + ".png" , dpi=600 )
     
     plt.show()
+    
+    
+output = 1-np.zeros((yWidth,xWidth,3),dtype = 'float')
 
-
-
-fractal( tr_a = 1.87+.1j , tr_b = 1.87-.1j , gif = True , iterMax = iterMax )
+fractal( output,  tr_a = 1.87+.1j , tr_b = 1.87-.1j , gif = True , iterMax = iterMax )
 
 
 
