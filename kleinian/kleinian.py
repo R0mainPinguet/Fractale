@@ -4,18 +4,18 @@ import imageio as iio
 
 from colour import Color
 
-path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\"
+path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\kleinian\\"
 
 # ==== --- PARAMETERS --- ==== #
 
-epsilon = 1e-2
-iterMax = 20
+epsilon = 5e-2
+iterMax = 13
 
-xMin = -5
-xMax = 20
+xMin = -50
+xMax = 50
 
-yMin = -5
-yMax = 20
+yMin = -50
+yMax = 50
 
 xWidth = int( (xMax - xMin) / epsilon )
 yWidth = int( (yMax - yMin) / epsilon )
@@ -86,7 +86,7 @@ def is_far(z1,z2):
     '''
     Returns True if the complex z1 is far enough from the complex z2. False otherwise
     '''
-    res = 2.05
+    res = 1
     
     return( np.abs(z1-z2) > res )
     
@@ -223,7 +223,7 @@ def fractal( output , tr_a , tr_b , gif , iterMax ):
     
 output = 1-np.zeros((yWidth,xWidth,3),dtype = 'float')
 
-fractal( output,  tr_a = 1.87+.1j , tr_b = 1.87-.1j , gif = True , iterMax = iterMax )
+fractal( output,  tr_a = 1.91 +.05j , tr_b = 3+0j , gif = False , iterMax = iterMax )
 
 
 
