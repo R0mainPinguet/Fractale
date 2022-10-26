@@ -6,7 +6,7 @@ from colour import Color
 
 path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\julia set\\"
 
-gridRes = 5e-3
+gridRes = 2e-3
 iterMax = 100
 
 xMin = -2
@@ -57,7 +57,7 @@ def julia( output , c , escapeRadius):
     
 
     for i in range( yWidth ):
-        print("i = " + str(i) )
+        print("i = " + str(i) + " / " + str(yWidth) )
         for j in range( xWidth ):
             
             iter = 0
@@ -83,7 +83,7 @@ def julia( output , c , escapeRadius):
     plt.xlabel("Real part")
     plt.ylabel("Imaginary part")
     
-    plt.savefig( path + "c=" + str(c) + ' R=' + str(escapeRadius) + ".png" , dpi=600 )
+    plt.savefig( path + "c=" + str(c) + ' R=' + str(escapeRadius) + ".png" , dpi=1000 )
     
     plt.show()
     
@@ -91,7 +91,10 @@ def julia( output , c , escapeRadius):
     
 output = 1-np.zeros((yWidth,xWidth,3),dtype = 'float')
 
-julia( output , -0.835 - 0.2321j, 10)
+c = 0.285 + 0.01j
+R = 2
+
+julia( output , c , R )
     
     
     
