@@ -56,7 +56,7 @@ def transfo( s , r , f , z ):
     
     return( s * z )
     
-def mandelbox( output , s,r,f , escapeRadius , show , verbose ):
+def mandelbox( output , s,r,f , minRadius , maxRadius , show , verbose ):
        
     for i in range( yWidth ):
         
@@ -70,7 +70,7 @@ def mandelbox( output , s,r,f , escapeRadius , show , verbose ):
             z = coord_1(i,j)
             z0 = z
             
-            while ( iter<iterMax and np.abs(z) < escapeRadius ):
+            while ( iter<iterMax and np.abs(z) < maxRadius and np.abs(z) > minRadius ):
                 z = z0 + transfo(s,r,f,z)
                 
                 iter += 1
@@ -112,7 +112,7 @@ def generateGif():
 #==# GRID #==#
 path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\mandelbox\\"
 
-gridRes = 2e-2
+gridRes = 1e-2
 iterMax = 50
 
 xMin = -5
@@ -147,108 +147,13 @@ s = 2
 r = .5
 f = 1
 
-R = 5
-#====#
-
-#==# GIF TYPE #==#
-
-# The gif can be : "Zoom" : a zoom on a particular point z0
-#                  "Turn" : a change of c in f(z) = z*z + c
-#                  "None" : no gif : only a picture
-
-gif = "None"
-
-zoom = 50
-z0 = 0
+minRadius = .1
+maxRadius = 50
 
 #====#
 
-imageCount = 5
+output = np.zeros((yWidth,xWidth,3),dtype = 'float')
+mandelbox( output , s,r,f , minRadius , maxRadius , show = True , verbose = True)
 
-if(gif == "Turn" ):
-    
-    for i in range(imageCount):
-        
-        print("image = " + str(i+1) + " / " + str(imageCount) )
-        
-        mandelbox( output , s,r,f , R , show = False , verbose = True)
-        
-        fig,axs=plt.subplots(1,1)
-        
-        axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
-        
-        axs.set_title('c = ' + str(c0) + ' R = ' + str(R) )
-        
-        axs.set_xlabel("Real part")
-        axs.set_ylabel("Imaginary part")
-        
-        fig.canvas.draw()
-        image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-        image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
-        
-        plt.savefig( path + "..\\temp\\fractale_" + str(i) + ".png"  , dpi=200 )
-        
-        plt.close()
-        
-        c = c * np.exp(1j * 2*np.pi / imageCount)
-        
-        print("= = = = = = = = = = = = ")
 
-    generateGif()
-    
-elif(gif == "Zoom"):
-
-    #== Saving the inital window size ==#
-    xSize0 = xMax - xMin
-    ySize0 = yMax - yMin
-    center0 = ((xMin+xMax)/2 + 1j*(yMin+yMax)/2)
-    #====#
-    
-    for i in range(imageCount):
-        
-        #==# Interpolates the window size ==#
-        center = z0 * i/(imageCount-1) + center0 * (imageCount-1-i)/(imageCount-1)
-        
-        xSize = xSize0/zoom * i/(imageCount-1) + (imageCount-1 - i)/(imageCount-1) * xSize0
-        ySize = ySize0/zoom * i/(imageCount-1) + (imageCount-1 - i)/(imageCount-1) * ySize0
-        
-        xMin = np.real(center) - xSize/2
-        xMax = np.real(center) + xSize/2
-        
-        yMin = np.imag(center) - ySize/2
-        yMax = np.imag(center) + ySize/2
-        #====#
-        
-        print("image = " + str(i+1) + " / " + str(imageCount) )
-        
-        mandelbox( output , s,r,f , R , show = False , verbose = True )
-        
-        fig,axs=plt.subplots(1,1)
-        
-        axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
-        
-        axs.set_title('s = ' + str(s) + ' r = ' + str(r) + ' f = ' + str(f)  )
-        
-        axs.set_xlabel("Real part")
-        axs.set_ylabel("Imaginary part")
-        
-        fig.canvas.draw()
-        image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-        image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
-        
-        plt.savefig( path + "..\\temp\\fractale_" + str(i) + ".png"  , dpi=200 )
-        
-        plt.close()
-            
-        print("= = = = = = = = = = = = ")
-
-    generateGif()
-    
-    
-elif(gif == "None"):
-    
-    output = np.zeros((yWidth,xWidth,3),dtype = 'float')
-    mandelbox( output , s,r,f , R , show = True , verbose = True)
-    
-    
     
