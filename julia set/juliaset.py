@@ -4,31 +4,6 @@ import imageio as iio
 
 from colour import Color
 
-path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\julia set\\"
-
-gridRes = 2e-3
-iterMax = 100
-
-xMin = -2
-xMax = 2
-
-yMin = -2
-yMax = 2
-
-xWidth = int( (xMax - xMin) / gridRes )
-yWidth = int( (yMax - yMin) / gridRes )
-
-print("xWidth = " + str(xWidth) )
-print("yWidth = " + str(yWidth) )
-
-col = ["black","white"]
-colours = []
-
-for i in range(len(col)-1):
-    colours += list(Color(col[i]).range_to(Color(col[i+1]),iterMax//(len(col)-1) ))
-    
-colours = [c.rgb for c in colours]
-
 
 def coord( x , y ):
     '''
@@ -50,14 +25,17 @@ def coord_1( i , j ):
     
     return( re + im*1j )
 
-def julia( output , c , escapeRadius):
-    
+def julia( output , c , escapeRadius , show , verbose):
+       
     #==# f(z) = z*z + c #==#
     f = lambda z : z**2 + c
     
 
     for i in range( yWidth ):
-        print("i = " + str(i) + " / " + str(yWidth) )
+        if(verbose):
+            if( not (i % 100 )):
+                print("i = " + str(i) + " / " + str(yWidth) )
+            
         for j in range( xWidth ):
             
             iter = 0
@@ -75,29 +53,93 @@ def julia( output , c , escapeRadius):
                 output[i,j] = colours[iter]
     
     
-    #==# Display #==#
-    plt.imshow(output,extent=[xMin,xMax,yMin,yMax])
-    
-    plt.title('c = ' + str(c) + ' R = ' + str(escapeRadius) )
-    
-    plt.xlabel("Real part")
-    plt.ylabel("Imaginary part")
-    
-    plt.savefig( path + "c=" + str(c) + ' R=' + str(escapeRadius) + ".png" , dpi=1000 )
-    
-    plt.show()
-    
-    
-    
-output = 1-np.zeros((yWidth,xWidth,3),dtype = 'float')
+    if( show ):
+        #==# Display #==#
+        plt.imshow(output,extent=[xMin,xMax,yMin,yMax])
+        
+        plt.title('c = ' + str(c) + ' R = ' + str(escapeRadius) )
+        
+        plt.xlabel("Real part")
+        plt.ylabel("Imaginary part")
+        
+        plt.savefig( path + "c=" + str(c) + ' R=' + str(escapeRadius) + ".png" , dpi=500 )
+        
+        plt.show()
 
-c = 0.285 + 0.01j
+
+#===# MAIN #===#
+    
+path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\julia set\\"
+
+gridRes = 3e-3
+iterMax = 100
+
+xMin = -1.5
+xMax = 1.5
+
+yMin = -1.5
+yMax = 1.5
+
+xWidth = int( (xMax - xMin) / gridRes )
+yWidth = int( (yMax - yMin) / gridRes )
+
+print("= = = = = = = = = = = = ")
+print("xWidth = " + str(xWidth) )
+print("yWidth = " + str(yWidth) )
+print("= = = = = = = = = = = = ")
+
+col = ["blue","red","yellow"]
+colours = []
+
+for i in range(len(col)-1):
+    colours += list(Color(col[i]).range_to(Color(col[i+1]),iterMax//(len(col)-1) ))
+    
+colours = [c.rgb for c in colours]
+
+gif = True
+
+c = -.4 + .6j
 R = 2
 
-julia( output , c , R )
+if(gif):
     
+    images = []
     
+    imageCount = 10
+
+    for i in range(imageCount):
+        
+        print("image = " + str(i) + " / " + str(imageCount) )
+        
+        output = np.zeros((yWidth,xWidth,3),dtype = 'float')
+        
+        julia( output , c , R , show = False , verbose = True)
+        
+        fig,axs=plt.subplots(1,1)
+        
+        axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
+        
+        axs.set_title('c = ' + str(c) + ' R = ' + str(R) )
+        
+        axs.set_xlabel("Real part")
+        axs.set_ylabel("Imaginary part")
+        
+        fig.canvas.draw()
+        image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
+        
+        images.append(image_from_plot)
+        
+        plt.close()
+        
+        c = c * np.exp(1j * 2*np.pi / imageCount)
     
+    iio.mimsave(path + 'c = ' + str(c) + ' R = ' + str(R) + '.gif', images)
+    
+else:
+    
+    output = np.zeros((yWidth,xWidth,3),dtype = 'float')
+    julia( output , c , R , show = True , verbose = True)
     
     
     
