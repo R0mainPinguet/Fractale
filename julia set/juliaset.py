@@ -25,12 +25,11 @@ def coord_1( i , j ):
     
     return( re + im*1j )
 
-def julia( output , c , escapeRadius , show , verbose):
+def julia( output , c , escapeRadius , show , verbose ):
        
     #==# f(z) = z*z + c #==#
     f = lambda z : z**2 + c
     
-
     for i in range( yWidth ):
         if(verbose):
             if( not (i % 100 )):
@@ -62,16 +61,17 @@ def julia( output , c , escapeRadius , show , verbose):
         plt.xlabel("Real part")
         plt.ylabel("Imaginary part")
         
-        plt.savefig( path + "c=" + str(c) + ' R=' + str(escapeRadius) + ".png" , dpi=500 )
+        plt.savefig( path + "c=" + str(c) + ' R=' + str(escapeRadius) + ".png" , dpi=400 )
         
         plt.show()
 
 
-#===# MAIN #===#
-    
+#===# PARAMETERS #===#
+
+#==# GRID #==#
 path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\julia set\\"
 
-gridRes = 3e-3
+gridRes = 5e-3
 iterMax = 100
 
 xMin = -1.5
@@ -88,30 +88,47 @@ print("xWidth = " + str(xWidth) )
 print("yWidth = " + str(yWidth) )
 print("= = = = = = = = = = = = ")
 
-col = ["blue","red","yellow"]
+output = np.zeros((yWidth,xWidth,3),dtype = 'float')
+#====#
+
+#==# COLOURS #==#
+col = ["red","blue"]
 colours = []
 
 for i in range(len(col)-1):
     colours += list(Color(col[i]).range_to(Color(col[i+1]),iterMax//(len(col)-1) ))
     
 colours = [c.rgb for c in colours]
+#====#
 
-gif = True
-
-c = -.4 + .6j
+#==# JULIA SET #==#
+c0 = -.74543 + .11301j
 R = 2
+#====#
 
-if(gif):
-    
-    images = []
-    
-    imageCount = 10
+#==# GIF TYPE #==#
 
+# The gif can be : "Zoom" : a zoom on a particular point z0
+#                  "Turn" : a change of c in f(z) = z*z + c
+#                  "None" : no gif : only a picture
+
+gif = "Zoom"
+
+zoom = 50
+z0 = .267 + .247j
+
+#====#
+
+images = []
+imageCount = 60
+
+c = c0
+
+if(gif == "Turn" ):
+    
     for i in range(imageCount):
         
-        print("image = " + str(i) + " / " + str(imageCount) )
-        
-        output = np.zeros((yWidth,xWidth,3),dtype = 'float')
+        print("image = " + str(i+1) + " / " + str(imageCount) )
         
         julia( output , c , R , show = False , verbose = True)
         
@@ -119,7 +136,7 @@ if(gif):
         
         axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
         
-        axs.set_title('c = ' + str(c) + ' R = ' + str(R) )
+        axs.set_title('c = ' + str(c0) + ' R = ' + str(R) )
         
         axs.set_xlabel("Real part")
         axs.set_ylabel("Imaginary part")
@@ -133,10 +150,61 @@ if(gif):
         plt.close()
         
         c = c * np.exp(1j * 2*np.pi / imageCount)
+        
+        print("= = = = = = = = = = = = ")
+
+    iio.mimsave(path + 'c = ' + str(c0) + ' R = ' + str(R) + '.gif', images)
+
+elif(gif == "Zoom"):
+
+    #== Saving the inital window size ==#
+    xSize0 = xMax - xMin
+    ySize0 = yMax - yMin
+    center0 = ((xMin+xMax)/2 + 1j*(yMin+yMax)/2)
+    #====#
     
+    for i in range(imageCount):
+        
+        #==# Interpolates the window size ==#
+        center = z0 * i/(imageCount-1) + center0 * (imageCount-1-i)/(imageCount-1)
+        
+        xSize = xSize0/zoom * i/(imageCount-1) + (imageCount-1 - i)/(imageCount-1) * xSize0
+        ySize = ySize0/zoom * i/(imageCount-1) + (imageCount-1 - i)/(imageCount-1) * ySize0
+        
+        xMin = np.real(center) - xSize/2
+        xMax = np.real(center) + xSize/2
+        
+        yMin = np.imag(center) - ySize/2
+        yMax = np.imag(center) + ySize/2
+        #====#
+        
+        print("image = " + str(i+1) + " / " + str(imageCount) )
+        
+        julia( output , c , R , show = False , verbose = True )
+        
+        fig,axs=plt.subplots(1,1)
+        
+        axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
+        
+        axs.set_title('c = ' + str(c0) + ' R = ' + str(R) )
+        
+        axs.set_xlabel("Real part")
+        axs.set_ylabel("Imaginary part")
+        
+        fig.canvas.draw()
+        image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
+        
+        images.append(image_from_plot)
+        
+        plt.close()
+            
+        print("= = = = = = = = = = = = ")
+
     iio.mimsave(path + 'c = ' + str(c) + ' R = ' + str(R) + '.gif', images)
     
-else:
+    
+elif(gif == "None"):
     
     output = np.zeros((yWidth,xWidth,3),dtype = 'float')
     julia( output , c , R , show = True , verbose = True)
