@@ -11,6 +11,11 @@ https://dhushara.com/DarkHeart/quasif/quasi.htm
 MANDELBOX
 
 https://fr.wikipedia.org/wiki/Mandelbox
+http://digitalfreepen.com/mandelbox370/
+http://images.math.cnrs.fr/Mandelbox.html
+https://www.fountainware.com/Funware/Mandelbrot3D/Mandelbrot3d.htm
+http://blog.hvidtfeldts.net/index.php/2011/11/distance-estimated-3d-fractals-vi-the-mandelbox/
+https://github.com/pedrotrschneider/shader-fractals
 
 4D JULIA
 

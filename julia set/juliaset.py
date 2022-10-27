@@ -66,12 +66,23 @@ def julia( output , c , escapeRadius , show , verbose ):
         plt.show()
 
 
+
+def generateGif():
+    
+    images = []
+    
+    for i in range(imageCount):
+        images.append( iio.imread( path + "..\\temp\\fractale_" + str(i) + ".png"  ))
+    
+    iio.mimsave(path + 'c = ' + str(c0) + ' R = ' + str(R) + '.gif', images)
+    
+    
 #===# PARAMETERS #===#
 
 #==# GRID #==#
 path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\julia set\\"
 
-gridRes = 5e-3
+gridRes = 3e-3
 iterMax = 100
 
 xMin = -1.5
@@ -92,7 +103,7 @@ output = np.zeros((yWidth,xWidth,3),dtype = 'float')
 #====#
 
 #==# COLOURS #==#
-col = ["red","blue"]
+col = ["black","white"]
 colours = []
 
 for i in range(len(col)-1):
@@ -102,7 +113,7 @@ colours = [c.rgb for c in colours]
 #====#
 
 #==# JULIA SET #==#
-c0 = -.74543 + .11301j
+c0 = 0+1j
 R = 2
 #====#
 
@@ -112,15 +123,14 @@ R = 2
 #                  "Turn" : a change of c in f(z) = z*z + c
 #                  "None" : no gif : only a picture
 
-gif = "Zoom"
+gif = "None"
 
 zoom = 50
-z0 = .267 + .247j
+z0 = 0
 
 #====#
 
-images = []
-imageCount = 60
+imageCount = 5
 
 c = c0
 
@@ -145,7 +155,7 @@ if(gif == "Turn" ):
         image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
         image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
         
-        images.append(image_from_plot)
+        plt.savefig( path + "..\\temp\\fractale_" + str(i) + ".png"  , dpi=200 )
         
         plt.close()
         
@@ -153,8 +163,8 @@ if(gif == "Turn" ):
         
         print("= = = = = = = = = = = = ")
 
-    iio.mimsave(path + 'c = ' + str(c0) + ' R = ' + str(R) + '.gif', images)
-
+    generateGif()
+    
 elif(gif == "Zoom"):
 
     #== Saving the inital window size ==#
@@ -195,13 +205,13 @@ elif(gif == "Zoom"):
         image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
         image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
         
-        images.append(image_from_plot)
+        plt.savefig( path + "..\\temp\\fractale_" + str(i) + ".png"  , dpi=200 )
         
         plt.close()
             
         print("= = = = = = = = = = = = ")
 
-    iio.mimsave(path + 'c = ' + str(c) + ' R = ' + str(R) + '.gif', images)
+    generateGif()
     
     
 elif(gif == "None"):
