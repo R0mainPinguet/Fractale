@@ -29,20 +29,22 @@ def transfo( s , r , f , z ):
     '''
     Applies the Mandelbox transformation to the complex z, defined as below :
     
-    z = s . ballFold( r , f . boxFold(z) ) + c
+    z = s . ballFold( r , f . boxFold(z) )
     
     '''
 
     #= BoxFold =#
-    if( np.real(z) > 1 ):
-        z = (2-np.real(z)) + np.imag(z)
-    elif(np.real(z) < -1 ):
-        z = (-2-np.real(z)) + np.imag(z)
-    
     if( np.imag(z) > 1 ):
-        z = np.real(z) + (2-np.imag(z))
+        z = np.real(z) + (2-np.imag(z))*1j
     elif(np.imag(z) < -1 ):
-        z = np.real(z) + (-2-np.imag(z))
+        z = np.real(z) + (-2-np.imag(z))*1j
+    
+    if( np.real(z) > 1 ):
+        z = (2-np.real(z)) + np.imag(z)*1j
+    elif(np.real(z) < -1 ):
+        z = (-2-np.real(z)) + np.imag(z)*1j
+    
+    
     #==#
     
     z = f * z
@@ -56,7 +58,7 @@ def transfo( s , r , f , z ):
     
     return( s * z )
     
-def mandelbox( output , s,r,f , minRadius , maxRadius , show , verbose ):
+def mandelbox( output , s,r,f , maxRadius , show , verbose ):
        
     for i in range( yWidth ):
         
@@ -70,16 +72,16 @@ def mandelbox( output , s,r,f , minRadius , maxRadius , show , verbose ):
             z = coord_1(i,j)
             z0 = z
             
-            while ( iter<iterMax and np.abs(z) < maxRadius and np.abs(z) > minRadius ):
+            while ( iter<iterMax and np.abs(z) < maxRadius):
                 z = z0 + transfo(s,r,f,z)
                 
                 iter += 1
             
             #==# Adding colors #==#
             if( iter == iterMax ):
-                output[i,j] = [0,0,0]
+                output[i,j] = Color("blue").rgb
             else:
-                output[i,j] = colours[iter]
+                output[i,j] = [1,1,1]
     
     
     if( show ):
@@ -96,30 +98,19 @@ def mandelbox( output , s,r,f , minRadius , maxRadius , show , verbose ):
         plt.show()
 
 
-
-def generateGif():
-    
-    images = []
-    
-    for i in range(imageCount):
-        images.append( iio.imread( path + "..\\temp\\mandelbox_" + str(i) + ".png"  ))
-    
-    iio.mimsave(path + 'c = ' + str(c0) + ' R = ' + str(R) + '.gif', images)
-    
-    
 #===# PARAMETERS #===#
 
 #==# GRID #==#
 path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\mandelbox\\"
 
-gridRes = 1e-2
-iterMax = 50
+gridRes = 2e-2
+iterMax = 20
 
-xMin = -5
-xMax = 5
+xMin = -7
+xMax = 7
 
-yMin = -5
-yMax = 5
+yMin = -7
+yMax = 7
 
 xWidth = int( (xMax - xMin) / gridRes )
 yWidth = int( (yMax - yMin) / gridRes )
@@ -132,28 +123,16 @@ print("= = = = = = = = = = = = ")
 output = np.zeros((yWidth,xWidth,3),dtype = 'float')
 #====#
 
-#==# COLOURS #==#
-col = ["red","blue"]
-colours = []
-
-for i in range(len(col)-1):
-    colours += list(Color(col[i]).range_to(Color(col[i+1]),iterMax//(len(col)-1) ))
-    
-colours = [c.rgb for c in colours]
-#====#
-
 #==# MANDELBOX #==#
 s = 2
 r = .5
 f = 1
 
-minRadius = .1
-maxRadius = 50
-
+maxRadius = 20
 #====#
 
-output = np.zeros((yWidth,xWidth,3),dtype = 'float')
-mandelbox( output , s,r,f , minRadius , maxRadius , show = True , verbose = True)
-
-
     
+output = np.zeros((yWidth,xWidth,3),dtype = 'float')
+mandelbox( output , s,r,f , maxRadius , show = True , verbose = True)
+
+

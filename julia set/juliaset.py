@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import imageio as iio
+from PIL import Image, ImageDraw
 
 from colour import Color
 
@@ -75,8 +76,7 @@ def generateGif():
         images.append( iio.imread( path + "..\\temp\\fractale_" + str(i) + ".png"  ))
     
     iio.mimsave(path + 'c = ' + str(c0) + ' R = ' + str(R) + '.gif', images)
-    
-    
+
 #===# PARAMETERS #===#
 
 #==# GRID #==#
