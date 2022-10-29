@@ -26,7 +26,7 @@ def coord_1( i , j ):
     
     return( re + im*1j )
 
-def julia( output , f , escapeRadius , show , verbose ):
+def mandelbrot( output , power , R , show , verbose ):
     
     for i in range( yWidth ):
         if(verbose):
@@ -36,9 +36,13 @@ def julia( output , f , escapeRadius , show , verbose ):
         for j in range( xWidth ):
             
             iter = 0
-            z = coord_1(i,j)
+            z = 0+0j
             
-            while ( iter<iterMax and np.abs(z) < escapeRadius ):
+            c = coord_1(i,j)
+            
+            f = lambda x : x**power + c
+            
+            while ( iter<iterMax and np.abs(z) < R ):
                 z = f(z)
                 
                 iter += 1
@@ -54,12 +58,12 @@ def julia( output , f , escapeRadius , show , verbose ):
         #==# Display #==#
         plt.imshow(output,extent=[xMin,xMax,yMin,yMax])
         
-        plt.title('c = ' + str(c) + ' R = ' + str(escapeRadius) )
+        plt.title("z**"+str(power)+"+c" )
         
         plt.xlabel("Real part")
         plt.ylabel("Imaginary part")
         
-        plt.savefig( path + "c=" + str(c) + ' R=' + str(escapeRadius) + ".png" , dpi=400 )
+        plt.savefig( path + "z^" + str(power) + " + c .png" , dpi=600 )
         
         plt.show()
 
@@ -72,12 +76,16 @@ def generateGif():
     for i in range(imageCount):
         images.append( iio.imread( path + "..\\temp\\fractale_" + str(i) + ".png"  ))
     
-    iio.mimsave(path + 'c = ' + str(c0) + ' R = ' + str(R) + '.gif', images)
+    if(gif=="Power"):
+        iio.mimsave(path + "power = " + str(pMin) + "-" + str(pMax) + ".gif", images)
+    elif(gif=="Zoom"):
+        iio.mimsave(path + "power = " + str(power) + ".gif", images)
+        
 
 #===# PARAMETERS #===#
 
 #==# GRID #==#
-path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\julia set\\"
+path = "C:\\Users\\R0MAIN\\Documents\\GitHub\\Fractale\\mandelbrot\\"
 
 gridRes = 5e-3
 iterMax = 100
@@ -109,65 +117,30 @@ for i in range(len(col)-1):
 colours = [c.rgb for c in colours]
 #====#
 
-#==# JULIA SET #==#
-c0 = -.162+1.04j
-c = c0 # In case the c is changing
-
-R = 2
-#====#
-
-#==# GIF TYPE #==#
+#==# Mandelbrot and gif type #==#
 
 # The gif can be : "Zoom" : a zoom on a particular point z0
-#                  "Turn" : a change of c in f(z) = z*z + c
-#                  "None" : no gif : only a picture
+#                  "Power" : changes the power p in the function f(z) = z**p + c , with p between pMin to pMax
+#                  "None" : no gif : only a picture with f(z) = z**power + c
 
-gif = "Turn"
+gif = "Power"
 imageCount = 60
+R = 2
 
 #= Zoom parameters =#
 zoom = 50
 z0 = 0
 
+#= Power parameters =#
+pMin = 1
+pMax = 10
+
+#= None parameters =#
+power = 2
+
 #====#
 
-
-
-if(gif == "Turn" ):
-    
-    for i in range(imageCount):
-        
-        print("image = " + str(i+1) + " / " + str(imageCount) )
-        
-        #==# f(z) = z*z + c #==#
-        f = lambda z : z**2 + c
-    
-        julia( output , f , R , show = False , verbose = True)
-        
-        fig,axs=plt.subplots(1,1)
-        
-        axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
-        
-        axs.set_title('c = ' + str(c0) + ' R = ' + str(R) )
-        
-        axs.set_xlabel("Real part")
-        axs.set_ylabel("Imaginary part")
-        
-        fig.canvas.draw()
-        image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-        image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
-        
-        plt.savefig( path + "..\\temp\\fractale_" + str(i) + ".png"  , dpi=200 )
-        
-        plt.close()
-        
-        c = c * np.exp(1j * 2*np.pi / imageCount)
-        
-        print("= = = = = = = = = = = = ")
-
-    generateGif()
-    
-elif(gif == "Zoom"):
+if(gif == "Zoom"):
 
     #== Saving the inital window size ==#
     xSize0 = xMax - xMin
@@ -175,9 +148,6 @@ elif(gif == "Zoom"):
     center0 = ((xMin+xMax)/2 + 1j*(yMin+yMax)/2)
     #====#
     
-    #==# f(z) = z*z + c #==#
-    f = lambda z : z**2 + c
-        
     for i in range(imageCount):
         
         #==# Interpolates the window size ==#
@@ -195,7 +165,7 @@ elif(gif == "Zoom"):
         
         print("image = " + str(i+1) + " / " + str(imageCount) )
         
-        julia( output , f , R , show = False , verbose = True )
+        mandelbrot( output , power , R , show = False , verbose = True )
         
         fig,axs=plt.subplots(1,1)
         
@@ -217,15 +187,43 @@ elif(gif == "Zoom"):
         print("= = = = = = = = = = = = ")
 
     generateGif()
-    
+
+elif(gif == "Power"):
+
+    for i in range(imageCount):
+        
+        #==# Interpolates the window size ==#
+        power = pMax * i/(imageCount-1) + pMin * (imageCount-1-i)/(imageCount-1)
+        #====#
+        
+        print("image = " + str(i+1) + " / " + str(imageCount) )
+        
+        mandelbrot( output , power , R , show = False , verbose = True )
+        
+        fig,axs=plt.subplots(1,1)
+        
+        axs.imshow(output,extent=[xMin,xMax,yMin,yMax])
+        
+        axs.set_title('f(z) = z**'+str(power) + '+c')
+        
+        axs.set_xlabel("Real part")
+        axs.set_ylabel("Imaginary part")
+        
+        fig.canvas.draw()
+        image_from_plot=np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        image_from_plot=image_from_plot.reshape(fig.canvas.get_width_height()[::-1]+(3,))
+        
+        plt.savefig( path + "..\\temp\\fractale_" + str(i) + ".png"  , dpi=200 )
+        
+        plt.close()
+            
+        print("= = = = = = = = = = = = ")
+
+    generateGif()
     
 elif(gif == "None"):
     
-    #==# f(z) = z*z + c #==#
-    f = lambda z : z**2 + c
-    
     output = np.zeros((yWidth,xWidth,3),dtype = 'float')
-    julia( output , f , R , show = True , verbose = True)
-    
+    mandelbrot( output , power , R , show = True , verbose = True)
     
     
