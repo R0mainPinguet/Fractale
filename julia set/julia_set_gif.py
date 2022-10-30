@@ -24,13 +24,14 @@ def Julia(c, u0):
     R = 2
     l = []
     n = 100
-    l = u(c,n, u0)
     count = 0
+    z = u0
     for i in l: 
         if(abs(i)>R):
             return count
         else: 
             count = count + 1
+        z = z*z + c
     return 200;
 
 
