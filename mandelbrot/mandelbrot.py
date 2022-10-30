@@ -133,7 +133,7 @@ z0 = 0
 
 #= Power parameters =#
 pMin = 1
-pMax = 10
+pMax = 3
 
 #= None parameters =#
 power = 2
