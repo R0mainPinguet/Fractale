@@ -1,14 +1,14 @@
-MANDELBULB
+#== MANDELBULB ==#
 
 https://fr.wikipedia.org/wiki/Mandelbulb
 
-KLEINIAN
+#== KLEINIAN ==#
 
 https://guests.mpim-bonn.mpg.de/gulotta/mc21.html
 https://cindyjs.org/gallery/main/Kleinian/
 https://dhushara.com/DarkHeart/quasif/quasi.htm
 
-MANDELBOX
+#== MANDELBOX ==#
 
 https://fr.wikipedia.org/wiki/Mandelbox
 http://digitalfreepen.com/mandelbox370/
@@ -17,10 +17,21 @@ https://www.fountainware.com/Funware/Mandelbrot3D/Mandelbrot3d.htm
 http://blog.hvidtfeldts.net/index.php/2011/11/distance-estimated-3d-fractals-vi-the-mandelbox/
 https://github.com/pedrotrschneider/shader-fractals
 
-4D JULIA
+#== 4D JULIA ==#
 
 https://en.wikipedia.org/wiki/Julia_set
 
-APOLLONIAN
+#== APOLLONIAN GASKET ==#
 
 https://en.wikipedia.org/wiki/Apollonian_gasket
+
+#== OPEN GL SHADERS ==#
+
+https://arukiap.github.io/fractals/2019/06/02/rendering-the-mandelbrot-set-with-shaders.html
+https://opengl.developpez.com/tutoriels/apprendre-opengl/?page=les-shaders
+
+#== SHADERTOY ==#
+
+https://www.shadertoy.com/view/MtKXRh
+https://www.shadertoy.com/view/ttdXDl
+https://www.shadertoy.com/view/tsXBzS
