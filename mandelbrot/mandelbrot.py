@@ -5,7 +5,6 @@ from PIL import Image, ImageDraw
 
 from colour import Color
 
-
 def coord( x , y ):
     '''
     Converts complex coordinates x+iy to pixel coordinates (i,j) on the grid of size xWidth * yWidth
@@ -26,7 +25,7 @@ def coord_1( i , j ):
     
     return( re + im*1j )
 
-def mandelbrot( output , power , R , show , verbose ):
+def mandelbrot( power , R , show , verbose ):
     
     for i in range( yWidth ):
         if(verbose):
@@ -165,7 +164,7 @@ if(gif == "Zoom"):
         
         print("image = " + str(i+1) + " / " + str(imageCount) )
         
-        mandelbrot( output , power , R , show = False , verbose = True )
+        mandelbrot( power , R , show = False , verbose = True )
         
         fig,axs=plt.subplots(1,1)
         
@@ -198,7 +197,7 @@ elif(gif == "Power"):
         
         print("image = " + str(i+1) + " / " + str(imageCount) )
         
-        mandelbrot( output , power , R , show = False , verbose = True )
+        mandelbrot( power , R , show = False , verbose = True )
         
         fig,axs=plt.subplots(1,1)
         
@@ -223,7 +222,6 @@ elif(gif == "Power"):
     
 elif(gif == "None"):
     
-    output = np.zeros((yWidth,xWidth,3),dtype = 'float')
-    mandelbrot( output , power , R , show = True , verbose = True)
+    mandelbrot( power , R , show = True , verbose = True)
     
     

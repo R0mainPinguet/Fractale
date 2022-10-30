@@ -25,6 +25,11 @@ https://en.wikipedia.org/wiki/Julia_set
 
 https://en.wikipedia.org/wiki/Apollonian_gasket
 
+#== PARALLEL PYTHON PROGRAMING ==#
+
+https://www.admin-magazine.com/HPC/Articles/Pymp-OpenMP-like-Python-Programming/(offset)/2
+https://github.com/classner/pymp/blob/main/README.md
+
 #== OPEN GL SHADERS ==#
 
 https://arukiap.github.io/fractals/2019/06/02/rendering-the-mandelbrot-set-with-shaders.html

@@ -4,8 +4,6 @@ import imageio as iio
 from PIL import Image, ImageDraw
 
 from colour import Color
-
-
 def coord( x , y ):
     '''
     Converts complex coordinates x+iy to pixel coordinates (i,j) on the grid of size xWidth * yWidth
