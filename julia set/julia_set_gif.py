@@ -44,7 +44,7 @@ WIDTH,HEIGHT = 1920,1080 #mettre la meilleure résolution puis resize l'image
 def fractale(c,i):
     im = Image.new('HSV', (WIDTH, HEIGHT), (255, 255, 255))
     draw = ImageDraw.Draw(im)
-    X = np.linspace(x_min, x_max, WIDTH)
+    X = np.linspace(x_max, x_min, WIDTH)
     Y = np.linspace(y_min, y_max, HEIGHT)
     for x in range(WIDTH):
         print(x)
