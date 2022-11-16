@@ -10,7 +10,7 @@ rd.seed(256)
 np.random.seed(256)
 
 #== Gamma correction ==#
-gamma = 2.2
+gamma = 4 
 #====#
 
 def coord( x , y ):
@@ -36,7 +36,28 @@ def coord_1( i , j ):
 def norm(x,y):
     return( np.sqrt( x**2 + y**2 ) )
     
-
+def process(out):
+    
+    new_output = out.copy()
+    
+    # #==# Processing data #==#
+    print("Processing data ...")
+    
+    for i in range(xWidth):
+        for j in range(yWidth):
+            alpha = new_output[i,j,3]
+            
+            #= Log scale =#
+            if(alpha>0):
+                new_output[i,j] *= np.log(alpha)/alpha
+    
+    #= Output value : floating number from 0 to 1 =#
+    new_output[:,:,0:3] = new_output[:,:,0:3] / np.max(new_output[:,:,0:3])
+    
+    #= Gamma factor =#
+    new_output[:,:,0:3] = np.power(new_output[:,:,0:3] , 1/gamma )
+    
+    return(new_output)
 
 def flames( output , samples , iterMax , show , verbose ):
     
@@ -44,44 +65,31 @@ def flames( output , samples , iterMax , show , verbose ):
     
     for i in range(samples):
         
-        if( verbose and not (i % 5000)):
+        if( verbose and not (i % 10000)):
             print("Samples = " + str(i) + " / " + str(samples) )
-            
+           
         arr = np.array([rd.random()*2-1 , rd.random()*2-1])
-
+    
         iter = 0
         
         while( iter < iterMax ):
-    
+            
             j = rd.randint(0,n-1)
             
             arr = V[F_index[j]]( basis[j] @ np.array([arr[0],arr[1],1]).T )
             (k,l) = coord(arr[0],arr[1])
-        
+            
             #==# Adding colors #==#
             if( iter > 20 ):
                 if( arr[0] < xMax and arr[0] > xMin and arr[1] < yMax and arr[1] > yMin ):
-                    output[k,l,0:3] = (colours[j] + output[k,l,0:3])/2
+                    output[k,l,0:3] += colours[j]
                     output[k,l,3] +=1
-                    
-            iter+=1
-        
-    # #==# Processing data #==#
-    print("Processing data ...")
-    
-    for i in range(xWidth):
-        for j in range(yWidth):
-            alpha = output[i,j,3]
             
-            #= Log scale =#
-            if(alpha>0):
-                output[i,j] *= np.log(alpha)/alpha
+            iter+=1
     
-    #= Output value : floating number from 0 to 1 =#
-    output = output / np.max(output[:,:,0:3])
-
+    processed_output = process(output)
     
-    if( show ):
+    if(show):
         
         name = ""
         for index in F_index:
@@ -90,12 +98,11 @@ def flames( output , samples , iterMax , show , verbose ):
         #==# Display #==#
         print("Displaying image ...")
         
-        plt.imshow( output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
-    
+        plt.imshow( processed_output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
+        
         plt.savefig( path + name + ".png" , dpi = 300 )
         
         plt.show()
-
 
 
 #===# PARAMETERS #===#
@@ -253,7 +260,7 @@ for i in range(len(F_index)):
 #===#
 
 
-flames( output , samples = 500000 , iterMax = 300 , show = True, verbose = True)
+flames( output , samples = 1000000 , iterMax = 50 , show = True, verbose = True)
 
 
 

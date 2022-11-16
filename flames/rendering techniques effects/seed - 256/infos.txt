@@ -1,5 +1,5 @@
-itermax : 300
-samples : 500 000
+itermax : between 50 and 100
+samples : between 500 000 and 1 000 000
 
 rd.seed(256)
 np.random.seed(256)
