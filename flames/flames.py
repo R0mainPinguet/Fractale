@@ -19,16 +19,6 @@ def coord( x , y ):
     
     return (int(i),int(j))
     
-def coord_1( i , j ):
-    '''
-    Converts pixel coordinates (i,j) on the grid of size xWidth * yWidth to complex coordinates x+iy
-    '''         
-    
-    re = xMax + (xMin-xMax)*(1-j/(xWidth-1))
-    im = yMax + i * (yMin-yMax)/(yWidth-1)
-    
-    return( re + im*1j )
-
 def norm(x,y):
     return( np.sqrt( x**2 + y**2 ) )
 
