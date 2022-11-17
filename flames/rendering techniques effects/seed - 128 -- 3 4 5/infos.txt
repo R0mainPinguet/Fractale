@@ -1,0 +1,30 @@
+itermax : 50
+samples : 1 000 000
+
+rd.seed(128)
+np.random.seed(128)
+
+
+( Just in case, the actual values : )
+
+Index des fonctions : 
+[3, 4, 5]
+
+
+Changement de repère de la fonction 3 : 
+[[ 0.73327409 -0.4737103  -0.73718304]
+ [-0.91681311 -0.52215133  0.2909492 ]]
+Couleur associée ( RGB ) : 
+(1.0, 0.0, 0.0)
+
+Changement de repère de la fonction 4 : 
+[[ 0.5811987   0.20288488 -0.33140126]
+ [-0.76114308 -0.38173389 -0.78055243]]
+Couleur associée ( RGB ) : 
+(1.0, 0.6470588235294115, 0.0)
+
+Changement de repère de la fonction 5 : 
+[[ 0.20422662 -0.49743008 -0.40063742]
+ [ 0.03423201  0.43040503  0.86289881]]
+Couleur associée ( RGB ) : 
+(1.0, 0.9999999999999998, 0.0)

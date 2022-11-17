@@ -1,0 +1,66 @@
+itermax : 50
+samples : 100 000
+
+rd.seed(128)
+np.random.seed(128)
+
+
+( Just in case, the actual values : )
+
+Index des fonctions : 
+[0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+
+Changement de repère de la fonction 0 : 
+[[ 0.73327409 -0.4737103  -0.73718304]
+ [-0.91681311 -0.52215133  0.2909492 ]]
+Couleur associée ( RGB ) : 
+(1.0, 0.0, 0.0)
+
+Changement de repère de la fonction 1 : 
+[[ 0.5811987   0.20288488 -0.33140126]
+ [-0.76114308 -0.38173389 -0.78055243]]
+Couleur associée ( RGB ) : 
+(1.0, 0.6470588235294115, 0.0)
+
+Changement de repère de la fonction 2 : 
+[[ 0.20422662 -0.49743008 -0.40063742]
+ [ 0.03423201  0.43040503  0.86289881]]
+Couleur associée ( RGB ) : 
+(1.0, 0.9999999999999998, 0.0)
+
+Changement de repère de la fonction 3 : 
+[[-0.79582369  0.41304773  0.97168473]
+ [ 0.11815814  0.18403849  0.48386135]]
+Couleur associée ( RGB ) : 
+(0.5647058823529412, 0.9333333333333333, 0.5647058823529413)
+
+Changement de repère de la fonction 4 : 
+[[ 0.64256241 -0.74865692  0.81522632]
+ [ 0.14634059  0.46244869 -0.39757167]]
+Couleur associée ( RGB ) : 
+(0.0, 0.5019607843137255, 1.6718652606120004e-16)
+
+Changement de repère de la fonction 5 : 
+[[-0.86674421 -0.67385904 -0.73244753]
+ [ 0.31186508 -0.15300734  0.96945119]]
+Couleur associée ( RGB ) : 
+(0.0, 0.0, 1.0)
+
+Changement de repère de la fonction 6 : 
+[[-0.19299607 -0.49001347 -0.56705433]
+ [ 0.68772063  0.3816554  -0.59422363]]
+Couleur associée ( RGB ) : 
+(0.0, 0.9999999999999998, 1.0)
+
+Changement de repère de la fonction 7 : 
+[[ 0.41460753  0.67672524  0.49108045]
+ [ 0.4988319  -0.55016505 -0.51677601]]
+Couleur associée ( RGB ) : 
+(0.5019607843137255, 0.0, 0.5019607843137254)
+
+Changement de repère de la fonction 8 : 
+[[ 0.75529295  0.74046652  0.22198738]
+ [-0.58726769 -0.58353936 -0.12741314]]
+Couleur associée ( RGB ) : 
+(0.9333333333333329, 0.5098039215686275, 0.9333333333333332)

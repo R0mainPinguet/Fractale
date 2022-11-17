@@ -6,12 +6,8 @@ import imageio as iio
 from PIL import Image, ImageDraw
 from colour import Color
 
-rd.seed(256)
-np.random.seed(256)
-
-#== Gamma correction ==#
-gamma = 4 
-#====#
+rd.seed(16)
+np.random.seed(16)
 
 def coord( x , y ):
     '''
@@ -35,13 +31,123 @@ def coord_1( i , j ):
 
 def norm(x,y):
     return( np.sqrt( x**2 + y**2 ) )
-    
-def process(out):
+
+def process_binary(out):
+    #=# a - Binary values #=#
     
     new_output = out.copy()
     
-    # #==# Processing data #==#
-    print("Processing data ...")
+    #==# Processing data #==#
+    print("Processing data : binary ...")
+    
+    max = np.max(new_output[:,:,0:3])
+    
+    for i in range(xWidth):
+        for j in range(yWidth):
+            alpha = new_output[i,j,3]
+            
+            if(alpha > 0):
+                new_output[i,j] = np.array([1,1,1,1])
+            else:
+                new_output[i,j] = np.array([0,0,0,0])
+    
+    #==# Display #==#
+    print("Displaying image ...")
+    name = "a - binary.png"
+    
+    plt.imshow( new_output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
+    plt.savefig( path + name , dpi = 300 )
+    plt.show()
+    #====#
+    
+def process_linear(out):
+    #=# b - Linear scale #=#
+    
+    new_output = out.copy()
+    
+    #==# Processing data #==#
+    print("Processing data : linear ...")
+    
+    max = np.max(new_output[:,:,0:3])
+    
+    for i in range(xWidth):
+        for j in range(yWidth):
+            alpha = new_output[i,j,3]
+            
+            new_output[i,j] = alpha/max * np.array([1,1,1,1])
+    
+    #==# Display #==#
+    print("Displaying image ...")
+    name = "b - linear.png"
+    
+    plt.imshow( new_output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
+    plt.savefig( path + name , dpi = 300 )
+    plt.show()
+    #====#
+    
+def process_log(out):
+    #=# c - Logarithmic scale #=#
+    
+    new_output = out.copy()
+    
+    #==# Processing data #==#
+    print("Processing data : logarithmic ...")
+    
+    for i in range(xWidth):
+        for j in range(yWidth):
+            alpha = new_output[i,j,3]
+            
+            #= Log scale =#
+            if(alpha>0):
+                new_output[i,j] = np.log(alpha) * np.array([1,1,1,1])
+    
+    #= Output value : floating number from 0 to 1 =#
+    new_output[:,:,0:3] = new_output[:,:,0:3] / np.max(new_output[:,:,0:3])
+    
+    #==# Display #==#
+    print("Displaying image ...")
+    name = "c - logarithmic.png"
+    
+    plt.imshow( new_output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
+    plt.savefig( path + name , dpi = 300 )
+    plt.show()
+    #====#
+
+def process_colors(out):
+    #=# d - Logarithmic scale and colors #=#
+    
+    new_output = out.copy()
+    
+    #==# Processing data #==#
+    print("Processing data : colors ...")
+    
+    for i in range(xWidth):
+        for j in range(yWidth):
+            alpha = new_output[i,j,3]
+            
+            #= Log scale =#
+            if(alpha>0):
+                new_output[i,j] *= np.log(alpha)/alpha
+    
+    #= Output value : floating number from 0 to 1 =#
+    new_output[:,:,0:3] = new_output[:,:,0:3] / np.max(new_output[:,:,0:3])
+    
+    #==# Display #==#
+    print("Displaying image ...")
+    name = "d - colors.png"
+    
+    plt.imshow( new_output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
+    plt.savefig( path + name , dpi = 300 )
+    plt.show()
+    #====#
+    
+def process_gamma(out , gamma):
+    #=# e - Logarithmic scale, colors and gamma correction #=#
+    
+    new_output = out.copy()
+    
+    #==# Processing data #==#
+    print("Processing data : gamma correction ...")
     
     for i in range(xWidth):
         for j in range(yWidth):
@@ -57,9 +163,16 @@ def process(out):
     #= Gamma factor =#
     new_output[:,:,0:3] = np.power(new_output[:,:,0:3] , 1/gamma )
     
-    return(new_output)
-
-def flames( output , samples , iterMax , show , verbose ):
+    #==# Display #==#
+    print("Displaying image ...")
+    name = "e - gamma " +  str(gamma) + ".png"
+    
+    plt.imshow( new_output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
+    plt.savefig( path + name , dpi = 300 )
+    plt.show()
+    #====#
+    
+def flames( output , samples , iterMax , verbose ):
     
     n = len(F_index)
     
@@ -87,23 +200,21 @@ def flames( output , samples , iterMax , show , verbose ):
             
             iter+=1
     
-    processed_output = process(output)
+    #=# Binary #=#
+    process_binary(output)
     
-    if(show):
-        
-        name = ""
-        for index in F_index:
-            name += str(index) + " " 
-        
-        #==# Display #==#
-        print("Displaying image ...")
-        
-        plt.imshow( processed_output[:,:,0:3] , extent=[xMin,xMax,yMin,yMax] )
-        
-        plt.savefig( path + name + ".png" , dpi = 300 )
-        
-        plt.show()
-
+    #=# Linear scale #=#
+    process_linear(output)
+    
+    #=# Logarithmic scale #=#
+    process_log(output)
+    
+    #=# Colors #=#
+    process_colors(output)
+    
+    #=# Gamma factors #=#
+    process_gamma(output,2.2)
+    process_gamma(output,4.0)
 
 #===# PARAMETERS #===#
 
@@ -224,7 +335,7 @@ def V12(arr):
 #=====#
 
 V = [V0,V1,V2,V3,V4,V5,V6,V7,V8,V9,V10,V11,V12]
-F_index = [ 0 , 1 , 2 ]
+F_index = [ 1,3,8 ]
 
 possibleColours = ["red" , "orange" , "yellow" , "lightgreen" , "green" , "blue" , "cyan" , "purple" , "violet" ]
 # rd.shuffle(possibleColours)
@@ -250,7 +361,7 @@ for i in range(len(F_index)):
     possibleColours.append(col)
     
     #== Debug ==#
-    print("Changement de repère de la fonction " + str(i) + " : ") 
+    print("Changement de repère de la fonction " + str(F_index[i]) + " : ") 
     print(A)
     print("Couleur associée ( RGB ) : ")
     print(Color(col).rgb)
@@ -260,7 +371,7 @@ for i in range(len(F_index)):
 #===#
 
 
-flames( output , samples = 1000000 , iterMax = 50 , show = True, verbose = True)
+flames( output , samples = 500000 , iterMax = 50 , verbose = True)
 
 
 
